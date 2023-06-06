@@ -1,5 +1,5 @@
 # loading packages in 
-library(shiny)
+library(shiny) 
 
 
 # trying out text etc INPUTS with flies 
@@ -58,6 +58,7 @@ ui <- fluidPage(
                choiceValues = list("angry", "happy", "sad")
   ))
 
+
 # loading the app
 shinyApp(ui, server) 
 
@@ -69,5 +70,85 @@ ui <- fluidPage(
   )
 )
 
+server <- function (input, output, session) {
+  
+}
+
 # loading the app
 shinyApp(ui, server) 
+
+
+# creating a checkbox 
+
+ui <- fluidPage(
+  checkboxGroupInput("drosophila", "What drosophila do you like", drosophila)
+)
+
+# loading the app
+shinyApp(ui, server)
+
+# doing the same but with a single checkbox for a yes or no question say
+
+ui <- fluidPage(
+  checkboxInput("drosophila", "drosphila?", value = TRUE),
+  checkboxInput("no drosophila", "no drosophila?")
+)
+
+# loading the app
+shinyApp(ui, server)
+
+# learning how to upload files 
+ui <- fluidPage(
+  fileInput("upload", NULL)
+  # this particular function requires special handling from the *server*
+)
+
+# loading the app
+shinyApp(ui, server)
+
+# learning action buttons and links 
+ui <- fluidPage(
+  actionButton("click", "Click me!"),
+  actionButton("hit", "Hit the fly!", icon = icon("fly"))
+  # these buttons are paired with observeevent or eventReactive in the server function
+  
+)
+
+# loading the app
+shinyApp(ui, server)
+
+# customising appearence 
+# done by the class argument 
+# can use btns 
+# e.g. buttons can span the entire width of the element 
+
+
+ui <- fluidPage(
+  fluidRow(
+    actionButton("click", "Click me!", class = "btn-danger"),
+    actionButton("hit", "Hit the fly!", class = "btn-lg btn-success")
+  ), 
+  fluidRow(
+    actionButton("eat", "Eat the fly!", class = "btn-block")
+  )
+)
+
+
+# loading the app
+shinyApp(ui, server)
+
+# the class arguments will set the class attribute of the underlying html 
+# affects how element is styled
+# e.g. Bootstrap (CSS design system used by Shiny)
+
+
+
+# EXERCISES
+
+# 1. generate a ui for labelling a textbox, space inside the area 
+
+ui <- fluidPage(
+  textInput("name", "What's the drosophila's name?", value = "drosophila"),
+  verbatimTextOutput("name")
+)
+
