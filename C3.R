@@ -59,6 +59,7 @@ server <- function(input, output, session) {
 
 # REACTIVE PROGRAMMING 
 
+
 ui <- fluidPage(
   textInput("name", "flies name"),
   textOutput("greeting")
@@ -71,8 +72,33 @@ server <- function(input, output, session) {
 }
 
 
+
+# run the app
 shinyApp(ui, server)
 
 
+# tip - have to hit enter first
+# but shiny will peform an action if update 
+# code doesn't tell shiny to create a string and send it to browser 
+# just informs shiny how to create string if it needs to
+
+# understanding imperative vs declarative code 
+
+
+
+
+# reactive expressions
+
+# tool that reduces duplication in reactive code by introducing additional nodes into the reactive graph
+
+server <- function(input, output, session) {
+  string <- reactive(paste0("Fly ", input$name, "!"))
+  output$greeting <- renderText(string())
+}
+
+# run the app
+shinyApp(ui, server)
+
+# this way it actually happens as you do it
 
 
