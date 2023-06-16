@@ -1,7 +1,7 @@
 # loading in the packagfes 
 library(shiny)
 
-# ui cocde 
+# ui code 
 ui <- fluidPage(
   
 )
@@ -102,3 +102,47 @@ shinyApp(ui, server)
 # this way it actually happens as you do it
 
 
+# execution order 
+
+server <- function(input, output, session) {
+  output$greeting <- renderText(string())
+  string <- reactive(paste0("Hello ", input$name, "!"))
+}
+
+
+# run the app
+shinyApp(ui, server)
+
+# string has to be created 
+#  just a different way of doing the code above 
+
+
+# EXERCISES 
+
+# ui code 
+
+ui <- fluidPage(
+  textInput("name", "What's your name?"),
+  textOutput("greeting")
+)
+
+# server code 
+
+server1 <- function(input, output, server) {
+  output$greeting <- renderText(paste0("Drossy "))
+}
+
+# 
+
+server2 <- function(input, output, server) {
+  greeting <- paste0("Hello ", input$name)
+  output$greeting <- renderText(greeting)
+}
+
+server3 <- function(input, output, server) {
+  output$greting <- paste0("Hello", input$name)
+}
+
+
+# run the app
+shinyApp(ui, server)
