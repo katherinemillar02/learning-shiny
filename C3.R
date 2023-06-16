@@ -128,11 +128,15 @@ ui <- fluidPage(
 
 # server code 
 
-server1 <- function(input, output, server) {
-  output$greeting <- renderText(paste0("Drossy "))
+server1 <- function(input, output, session) {
+  output$greeting <- renderText({
+    paste0 ("Drossy ", input$name, "!")
+     })
 }
 
-# 
+
+shinyApp(ui, server)
+
 
 server2 <- function(input, output, server) {
   greeting <- paste0("Hello ", input$name)
@@ -146,3 +150,5 @@ server3 <- function(input, output, server) {
 
 # run the app
 shinyApp(ui, server)
+
+
