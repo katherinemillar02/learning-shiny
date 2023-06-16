@@ -240,3 +240,124 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+
+# controlling timing of evaluation 
+
+
+# ui 
+ui <- fluidPage(
+  fluidRow(
+    column(3, 
+           numericInput("maleflies", label = "male flies", value = 10),
+           numericInput("femaleflies", label = "female flies", value = 10),
+           numericInput("n", label = "n", value = 10, min = 0)
+    ),
+    column(9, plotOutput("hist"))
+  )
+)
+
+# server function
+server <- function(input, output, session) {
+  x1 <- reactive(rpois(input$n, input$maleflies))
+  x2 <- reactive(rpois(input$n, input$femaleflies))
+  output$hist <- renderPlot({
+    freqpoly(x1(), x2(), binwidth = 1, xlim = c(0, 40))
+  }, res = 96)
+}
+
+
+# run the app 
+shinyApp(ui, server)
+
+
+# on click function 
+
+
+
+# ui function
+ui <- fluidPage(
+  fluidRow(
+    column(3, 
+           numericInput("maleflies", label = "male flies", value = 5),
+           numericInput("femaleflies", label = "female flies", value = 5),
+           numericInput("n", label = "n", value = 10, min = 0),
+           actionButton("simulate", "Simulate!")
+    ),
+    column(9, plotOutput("hist"))
+  )
+)
+
+
+# need to learn a new tool to use function
+
+server <- function(input, output, session) {
+  x1 <- reactive({
+    input$simulate
+    rpois(input$n, input$maleflies)
+  })
+  x2 <- reactive({
+    input$simulate
+    rpois(input$n, input$femaleflies)
+  })
+  output$hist <- renderPlot({
+    freqpoly(x1(), x2(), binwidth = 1, xlim = c(0, 10))
+  }, res = 96)
+}
+
+
+# loading the app 
+shinyApp(ui, server)
+
+
+# look at servers with reactive events 
+
+
+
+server <- function(input, output, session) {
+  x1 <- eventReactive(input$simulate, {
+    rpois(input$n, input$lambda1)
+  })
+  x2 <- eventReactive(input$simulate, {
+    rpois(input$n, input$lambda2)
+  })
+  
+  output$hist <- renderPlot({
+    freqpoly(x1(), x2(), binwidth = 1, xlim = c(0, 40))
+  }, res = 96)
+}
+
+# run app 
+shinyApp(ui, server)
+
+# this whole thing doesn't seem to run 
+
+
+
+# new chapter 
+
+# observers 
+
+ui <- fluidPage(
+  textInput("droso name", "what's the flies name"), 
+  textOutput("greeting")
+)
+
+server <- function(input, output, session) {
+  string <- reactive(paste0("Droso", input$name, "!"))
+
+
+output$greeting <- renderText(string())
+observeEvent(input$name, {
+  message("fly done")
+    
+  })
+}
+
+
+# run the app 
+
+shinyApp(ui, server)
+
+
