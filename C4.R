@@ -111,7 +111,7 @@ ui <- fluidPage(
 
 
 
-
+# server function 
 server <- function(input, output, session) {
   selected <- reactive(all_parkrun %>% filter(parkrun_times == input$time))
   selected <- reactive(all_parkrun %>% filter(person_times == input$time))
@@ -125,13 +125,34 @@ server <- function(input, output, session) {
     selected() %>% count(parkrun, time, sort = TRUE)
   )
 }
-  
 
+allparkruns_summary <- reactive({
+  all_parkrun() %>%
+    count(date, time, person) 
+
+})
+  
+output$person_times <- renderPlot ({
+  allparkruns_summary %>% 
+    ggplot(aes( time, color = person)) 
+})
 
 # run the app 
 shinyApp(ui, server)
 
 
 # sort of works 
+# Error in output$person_times <- renderPlot({ : object 'output' not found
+
+
+
+# polsih tables 
+
+# components are somewhat in place - improve app 
+# do not want all the information shown, just want the highlights 
+# truncate the tables 
+# can use forcats functions 
+# convert the variable to a factor, order by the frequency of the levels - lump together after the top 5 
+
 
                                                      
