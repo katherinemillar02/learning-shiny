@@ -2,6 +2,7 @@
 library(shiny)
 library(vroom)
 library(tidyverse)
+library(readxl)
 
 # get data on your own computer 
 dir.create("neiss")
@@ -16,3 +17,127 @@ download("products.tsv")
 
 
 # leave this chapter for now until you can work the data? 
+
+# trying with own data 
+
+# uploading the data 
+
+all_parkrun <- read_excel("all_parkrun.xlsx")
+
+
+
+# exploring the data 
+
+selected <- all_parkrun  %>% filter(time == 35.5)
+nrow(selected)
+#> [1] 2993
+# trying again 
+selected <- all_parkrun  %>% filter(time == 29.25)
+
+
+# looking at summaries 
+# struggling to relate this to the data? 
+allparkruns_summary <- all_parkrun %>% 
+  count(time, person, date)
+
+allparkruns_summary_plot <- allparkruns_summary %>% 
+  ggplot(aes(date, time, colour = person)) + 
+  geom_line() + 
+  labs(y = "time")
+
+# spike in longer times between 2021/2022 and in 2023 
+
+summary_test <- all_parkrun %>% 
+  count(time, person, date) %>% 
+  left_join(time, by = c("person", "parkrun")) %>% 
+  mutate(rate = n / time * 1e4)
+
+summary_test
+
+# getting somewhere but code doesn't work 
+
+allparkruns_summary %>% 
+  ggplot(aes(date, time, colour = person)) + 
+  geom_line(na.rm = TRUE) + 
+  labs(y = "Injuries per 10,000 people")
+
+# testing code for named variables 
+all_parkrun %>% 
+  sample_n(10) %>% 
+  pull(parkrun)
+
+
+# prototypes 
+
+# building a complex app - start simple 
+# start with input - 
+
+
+# making a variable/ tibble for something which will show the parkrun with the parkrun time 
+parkrun_times <- setNames(all_parkrun$time,  all_parkrun$parkrun)
+
+# making a variable/ tibble for something which will show the person with the parkrun time 
+person_times <- setNames(all_parkrun$time,  all_parkrun$person)
+
+
+# creating a ui 
+ui <- fluidPage(
+  fluidRow(
+    column(6,
+           selectInput("time", "parkrun", choices = parkrun_times) # select for the parkrun
+    )
+  ),
+  fluidRow(
+    column(6,
+           selectInput("time", "person", choices = person_times) # select fot the person 
+    )
+  ),
+  fluidRow(
+    column(4, tableOutput("parkrun")),
+    column(4, tableOutput("person")),
+  ),
+  fluidRow(
+    column(12, plotOutput("time"))
+  )
+)
+
+
+
+
+server <- function(input, output, session) {
+  selected <- reactive(all_parkrun %>% filter(parkrun_times == input$time))
+  
+  output$parkrun <- renderTable(
+    selected() %>% count(parkrun, time, sort = TRUE)
+  )
+  output$body_part <- renderTable(
+    selected() %>% count(person, time, sort = TRUE)
+  )
+  output$location <- renderTable(
+    selected() %>% count(date, time, sort = TRUE)
+  )
+  
+  
+
+  
+  allparkruns_summary <- reactive({
+    all_parkrun() %>%
+      count(date, person, ) %>%
+      left_join(population, by = c("age", "sex")) %>%
+      mutate(rate = n / population * 1e4)
+  })
+  
+  output$age_sex <- renderPlot({
+    summary() %>%
+      ggplot(aes(age, n, colour = sex)) +
+      geom_line() +
+      labs(y = "Estimated number of injuries")
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+
+
+# sort of works 
+
+                                                     
