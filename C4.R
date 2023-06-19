@@ -3,6 +3,7 @@ library(shiny)
 library(vroom)
 library(tidyverse)
 library(readxl)
+library(shiny)
 
 # get data on your own computer 
 dir.create("neiss")
@@ -80,6 +81,8 @@ parkrun_times <- setNames(all_parkrun$time,  all_parkrun$parkrun)
 person_times <- setNames(all_parkrun$time,  all_parkrun$person)
 
 
+person_date <- setNames(all_parkrun$person, all_parkrun$date)
+
 # creating a ui 
 ui <- fluidPage(
   fluidRow(
@@ -89,7 +92,12 @@ ui <- fluidPage(
   ),
   fluidRow(
     column(6,
-           selectInput("time", "person", choices = person_times) # select fot the person 
+           selectInput("time", "person", choices = person_times) # select for the person 
+    )
+  ),
+  fluidRow(
+    column(6,
+           selectInput("person", "date", choices = person_date) # select for the person and date
     )
   ),
   fluidRow(
@@ -106,35 +114,21 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   selected <- reactive(all_parkrun %>% filter(parkrun_times == input$time))
-  
+  selected <- reactive(all_parkrun %>% filter(person_times == input$time))
+  output$parkrun <- renderTable(
+    selected() %>% count(parkrun, time, person, date, sort = TRUE)
+  )
+  output$person <- renderTable(
+    selected() %>% count(person, time, sort = TRUE)
+  )
   output$parkrun <- renderTable(
     selected() %>% count(parkrun, time, sort = TRUE)
   )
-  output$body_part <- renderTable(
-    selected() %>% count(person, time, sort = TRUE)
-  )
-  output$location <- renderTable(
-    selected() %>% count(date, time, sort = TRUE)
-  )
-  
-  
-
-  
-  allparkruns_summary <- reactive({
-    all_parkrun() %>%
-      count(date, person, ) %>%
-      left_join(population, by = c("age", "sex")) %>%
-      mutate(rate = n / population * 1e4)
-  })
-  
-  output$age_sex <- renderPlot({
-    summary() %>%
-      ggplot(aes(age, n, colour = sex)) +
-      geom_line() +
-      labs(y = "Estimated number of injuries")
-  }, res = 96)
 }
+  
 
+
+# run the app 
 shinyApp(ui, server)
 
 
