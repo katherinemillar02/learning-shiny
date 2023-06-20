@@ -69,15 +69,19 @@ unique(parkrun_data$person)
 
 # trying to write a simple app 
 
+
+# running a ui 
 ui <- fluidPage(
   selectInput("parkrun", "parkrun", choices = unique(parkrun_data$parkrun)),
   tableOutput("selected")
 )
 
+
+# running server function
 server <- function(input, output, session) {
   selected <- reactive(parkrun_data[parkrun_data$parkrun == input$parkrun, ] )
   output$selected <- renderTable(head(selected(), 10))
 }
 
-
+# running the app code 
 shinyApp(ui, server)
