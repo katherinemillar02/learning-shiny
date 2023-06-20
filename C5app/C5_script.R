@@ -50,3 +50,34 @@ if (input$value == "a") {
 if (my_reactive() < 0) {
   browser()
 }
+
+
+
+#read in the data 
+parkrun_data <- read_excel("all_parkrun.xlsx")
+
+# viewing the data 
+parkrun_data
+
+# running the rows
+unique(parkrun_data$date)
+unique(parkrun_data$parkrun_no)
+unique(parkrun_data$parkrun)
+unique(parkrun_data$time)
+unique(parkrun_data$person)
+
+
+# trying to write a simple app 
+
+ui <- fluidPage(
+  selectInput("parkrun", "parkrun", choices = unique(parkrun_data$parkrun)),
+  tableOutput("selected")
+)
+
+server <- function(input, output, session) {
+  selected <- reactive(parkrun_data[parkrun_data$parkrun == input$parkrun, ] )
+  output$selected <- renderTable(head(selected(), 10))
+}
+
+
+shinyApp(ui, server)
