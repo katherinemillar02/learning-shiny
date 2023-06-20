@@ -80,8 +80,50 @@ ui <- fluidPage(
 # running server function
 server <- function(input, output, session) {
   selected <- reactive(parkrun_data[parkrun_data$parkrun == input$parkrun, ] )
-  output$selected <- renderTable(head(selected(), 10))
+  output$selected <- renderTable(head(selected(), 100))
 }
 
 # running the app code 
 shinyApp(ui, server)
+
+# this app allows you to choose a parkrun only and will then show the date, parkrun number, parkrun, time and person 
+# can adapt this to have more rows? 
+
+
+# trying out selecting a new thing 
+parkrun_data[parkrun_data$parkrun == "colney-lane", ]
+
+# removing nas - there aren't any though
+
+head(parkrun_data$parkrun == "colney-lane", 100)
+
+# see what that did 
+subset(parkrun_data, parkrun == "colney-lane")
+
+# look for NAs 
+subset(parkrun_data, parkrun == NA) # code wrong but ignore this 
+
+# can ignore rest of chapter regarding NAs as do not have NAs in this dataset? 
+
+# debugging reactivity 
+# reactive files in an unexpected order 
+# debug - call print() - displaying vectors of data = puts quotes around strings, starts the line with [1]
+# message() sends result to standard error - not standard output 
+# technical terms describe output streams 
+# do not usually notice, displayed in the same way when running interactively 
+# app hosted elsewhere, output is sent to standard error - recorded in the logs 
+
+# message() with glue::glue() = interleave text and values in a message 
+# glue() = anything wrapped inside evaluated and inserted into the output 
+
+library(glue)
+
+name <- "katie"
+message(glue("Hey {name}"))
+
+
+
+# can use str() will print the detailed structure of an object 
+# useful in checking you have the type of object you expect 
+
+
