@@ -146,6 +146,38 @@ shinyApp(ui, server)
 
 
 
+library(shiny)
+
+# trying again with creating own ui and server
+
+# ui 
+
+ui <- fluidPage(
+  fluidRow(
+    column(6, 
+            selectInput("time", "parkrun",
+                        choices = all_parkrun )
+      
+    )
+  )
+)
+
+
+# server 
+
+
+server <- function(input, output, session) {
+  all_parkrun <- reactive(all_parkrun %>% filter == input$time)
+}
+
+
+
+# run app 
+shinyApp(ui, server)
+
+
+
+
 # polsih tables 
 
 # components are somewhat in place - improve app 
