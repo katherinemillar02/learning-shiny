@@ -127,3 +127,57 @@ message(glue("Hey {name}"))
 # useful in checking you have the type of object you expect 
 
 
+# an example of using glue in shiny 
+
+ui <- fluidPage(
+  sliderInput("maleflies", "maleflies", value = 1, min = 0 , max = 10), 
+  sliderInput("femaleflies", "femlaeflies", value = 1, min = 0 , max = 10), 
+  sliderInput("virginfemaleflies", "virginfemaleflies", value = 1, min = 0 , max = 10),
+  textOutput("total")
+)
+
+
+server <- function(input, output, session) {
+  observeEvent(input$maleflies, {
+    message(glue("updating female flies from {input$femaleflies} to {input$maleflies * 2}"))
+    updateSliderInput(session, "y", value = input$maleflies * 2)
+  })
+
+total <- reactive({
+  total <- input$maleflies + input$femaleflies + input$virginfemaleflies
+  message(glue("New total is {total}"))
+})
+  
+output$total <- renderText({
+  total()
+})
+}
+
+# running packages again
+
+library(shiny)
+library(glue)
+
+# code to run the app 
+shinyApp(ui, server)
+
+
+# reprex basics 
+
+# running the library 
+
+library(shiny)
+
+# running the ui
+
+ui <- fluidPage(
+  selectInput("n", "N", 1:10),
+  plotOutput("plot")
+)
+
+server <- function (input, output, session) {
+  output$plot <- renderPlot({
+    n <- input$n * 2 
+    plot(head(cars, n))
+  })
+}
