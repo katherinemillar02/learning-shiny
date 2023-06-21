@@ -181,3 +181,18 @@ server <- function (input, output, session) {
     plot(head(cars, n))
   })
 }
+
+
+# making a reprex 
+
+mydata <- data.frame(x = 1:5, y =c ("a", "b", "c", "d", "e"))
+
+# generates the code that will run the data
+dput(mydata)
+
+# both work the same 
+mydata2 <- structure(list(x = 1:5, y = c("a", "b", "c", "d", "e")), class = "data.frame", row.names = c(NA, 
+                                                                                             -5L))
+
+
+
