@@ -191,8 +191,134 @@ mydata <- data.frame(x = 1:5, y =c ("a", "b", "c", "d", "e"))
 dput(mydata)
 
 # both work the same 
-mydata2 <- structure(list(x = 1:5, y = c("a", "b", "c", "d", "e")), class = "data.frame", row.names = c(NA, 
-                                                                                             -5L))
+                                                       
+                                              
+library(lubridate)  
+library(shiny)
+library(xts)
 
+
+# testing with a case study 
+
+# reading packages in 
+library(xts)
+library(lubridate)
+library(shiny)
+
+# ui code 
+ui <- fluidPage(
+  uiOutput("interaction_slider"),
+  verbatimTextOutput("breaks")
+)
+
+# server code 
+server <- function(input, output, session) {
+  df <- data.frame(
+    dateTime = c(
+      "2019-08-20 16:00:00",
+      "2019-08-20 16:00:01",
+      "2019-08-20 16:00:02",
+      "2019-08-20 16:00:03",
+      "2019-08-20 16:00:04",
+      "2019-08-20 16:00:05"
+    ),
+    var1 = c(9, 8, 11, 14, 16, 1),
+    var2 = c(3, 4, 15, 12, 11, 19),
+    var3 = c(2, 11, 9, 7, 14, 1)
+  )
+  
+  timeSeries <- as.xts(df[, 2:4], 
+                       order.by = strptime(df[, 1], format = "%Y-%m-%d %H:%M:%S")
+  )
+  print(paste(min(time(timeSeries)), is.POSIXt(min(time(timeSeries))), sep = " "))
+  print(paste(max(time(timeSeries)), is.POSIXt(max(time(timeSeries))), sep = " "))
+  
+  output$interaction_slider <- renderUI({
+    sliderInput(
+      "slider",
+      "Select Range:",
+      min = min(time(timeSeries)),
+      max = max(time(timeSeries)),
+      value = c(min, max)
+    )
+  })
+  
+  brks <- reactive({
+    req(input$slider)
+    seq(input$slider[1], input$slider[2], length.out = 10)
+  })
+  
+  output$breaks <- brks
+}
+
+# load the app 
+shinyApp(ui, server)
+
+# errors 
+# trying with a new server 
+
+datetime <- Sys.time() + (86400 * 0:10)
+
+server <- function(input, output, session) {
+  output$interaction_slider <- renderUI({
+    sliderInput(
+      "slider",
+      "Select Range:",
+      min   = min(datetime),
+      max   = max(datetime),
+      value = c(min, max)
+    )
+  })
+  
+  brks <- reactive({
+    req(input$slider)
+    seq(input$slider[1], input$slider[2], length.out = 10)
+  })
+  
+  output$breaks <- brks
+}
+# load the app 
+shinyApp(ui, server)
+
+# same errors? 
+# new ui? 
+
+ui <- fluidPage(
+  sliderInput("slider",
+              "Select Range:",
+              min   = min(datetime),
+              max   = max(datetime),
+              value = c(min, max)
+  ),
+  verbatimTextOutput("breaks")
+)
+
+
+# still same error 
+
+# new variables 
+min(datetime)
+#> [1] "2022-08-23 23:09:34 UTC"
+max(datetime)
+#> [1] "2022-09-02 23:09:34 UTC"
+c(min, max)
+#> [[1]]
+#> function (..., na.rm = FALSE)  .Primitive("min")
+#> 
+#> [[2]]
+#> function (..., na.rm = FALSE)  .Primitive("max")
+
+ui <- fluidPage(
+  sliderInput("slider",
+              "Select Range:",
+              min   = min(datetime),
+              max   = max(datetime),
+              value = range(datetime)
+  ),
+  verbatimTextOutput("breaks")
+)
+
+
+# finally worked after the format of datetime was corrected 
 
 
