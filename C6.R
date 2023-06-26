@@ -215,3 +215,65 @@ ui <- fluidPage(
 )
 
 shinyApp(ui, server) 
+
+
+# navbarPage() another way of doing - runs the tab tiles horizontally 
+# can use navbarMenu() to add drop down menus for an additional level of hierachy 
+
+ui <- navbarPage(
+  "page title",
+  tabPanel("p1", "1"),
+  tabPanel("p2", "2"),
+  tabPanel("p3", "3"),
+  navbarMenu("subpanels", 
+             tabPanel("p4a", "four a"),
+             tabPanel("p4b", "four b"), 
+             tabPanel("p4c", "four c")
+
+             
+))
+
+# sets the ability to create rich and satisyinbg apps 
+# bootstrap : collection of HTML conventions, CSS styles, JS snippets 
+
+# Themes 
+
+# bootstrap = can theme with the bslib package 
+
+fluidPage(
+  theme = bslib::bs_theme()
+)
+
+
+# using bootstrap with shiny themes
+
+ui <- fluidPage(
+  theme = bslib::bs_theme(bootswatch = "sandstone"),
+  sidebarLayout(
+    sidebarPanel(
+      textInput("txt", "text input: ", " text here"),
+      sliderInput("slider", "slider input:", 1, 100, 30)
+    ),
+    mainPanel(
+      h1(paste0("theme: sandstone")),
+      h2("header 2"),
+      p("texty")
+    )
+  )
+)
+
+
+# run the app 
+shinyApp(ui, server)
+
+
+theme <- bslib::bs_theme(
+  bg = "yellow", 
+  fg = "green",
+  base_font = "Source Sans Pro"
+)
+
+# preview and customise your theme:: with setting ^^ 
+# meant to open a shiny app showing what the theme looks like 
+# provides you with interactive controls for customising the most important parameters 
+
