@@ -277,3 +277,27 @@ theme <- bslib::bs_theme(
 # meant to open a shiny app showing what the theme looks like 
 # provides you with interactive controls for customising the most important parameters 
 
+
+# plot themes 
+# may want to customise plots to match 
+# can use thematic package
+# themes ggplot2, lattice, base plots 
+# calling thematic_shiny in server function will determine all settings from your app theme 
+library(ggplot2)
+
+ui <- fluidPage(
+  theme = bslib::bs_theme(bootswatch = "darkly"), 
+  titlePanel("a themed plot"), 
+  plotOutput("plot"), 
+)
+
+server <- function(input, output, session) {
+  thematic::thematic_shiny()
+  
+  output$plot <- renderPlot({
+    ggplot(mtcars, aes (wt, mpg)) + 
+      geom_point() + 
+      geom_smooth()
+  }, res = 96)
+}
+
