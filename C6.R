@@ -136,4 +136,82 @@ server <- function(input, output, session) {
   })
 }
 
+
+# run the app
 shinyApp(ui, server)
+
+
+# Tabsets
+
+# tabsetPanel() and tabPanel() will break a page into pieces 
+# tabsetPanel() creates a container for any number of tabPanels() - can contain any other HTMl components 
+
+# load libraries 
+library(shiny)
+
+
+
+ui <- fluidPage(
+  tabsetPanel(
+    tabPanel("import data",
+             fileInput("file","data", buttonLabel = "upload"),
+    textInput("delim", "delimiter (leave blank to guess)", ""),
+    numericInput("rows", "rows to preview", 10, min = 1)
+    
+  ),
+  tabPanel("set parameters"), 
+  tabPanel("vis results")
+))
+
+# run the app 
+shinyApp(ui, server)
+
+
+# knowing tab user has selected - id argument to tabsetPanel() becomes input 
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      textOutput("panel")
+    ), 
+    mainPanel(
+      tabsetPanel(
+        id = "tabset",
+        tabPanel("panel 1", "one"),
+        tabPanel("panel 2, two"),
+        tabPanel("PNAEL 3", "PANEL")
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  output$panel <- renderText({
+    paste("current panel: ", input$tabset)
+  })
+}
+
+# run the app 
+shinyApp(ui, server)
+
+ # this app tells you at the top which panel you have selected
+
+# navlists and navbars 
+# horizontal - fundamental limit to tabs you can use (esp if they have long titles)
+# navbarPage() and navbarMenu() = two alternative layouts - more tabs with longer titles 
+# navlistPanel() similar to tabsetPanel() but doesnt run tab titles horizontally 
+# shows them vertically in a sidebar
+# adds headings with plain strings 
+
+ui <- fluidPage(
+  navlistPanel(
+    id = "tabset", 
+    "heading 1", 
+    tabPanel("panel 1", "panel one contents"), 
+    "heasing deux", 
+    tabPanel("p2", "p2 cont"), 
+    tabPanel("p3", "p3 cont")
+  )
+)
+
+shinyApp(ui, server) 
